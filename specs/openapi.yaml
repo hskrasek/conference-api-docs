@@ -1,0 +1,321 @@
+openapi: "3.0.1"
+info:
+  title: "Tech Conferences API"
+  version: "0.1.0"
+  contact:
+    name: Developer Support
+    url: developers.conferences.io/support
+    email: support@conferences.io
+servers:
+- url: https://api.conferences.io
+  description: Production
+tags:
+  - name: categories
+    description: |
+      Endpoints for getting categories conferences can be apart of
+  - name: conferences
+    description: |
+      Endpoints for working with conferences
+paths:
+  /categories:
+    get:
+      summary: Get categories
+      description: |
+        Get a list of categories that apply to conferences
+      operationId: getCategories
+      tags:
+        - categories
+      responses:
+        200:
+          $ref: '#/components/responses/CategoriesResponse'
+  /conferences:
+    get:
+      summary: Get conferences
+      description: |
+        Get a list of tech conferences
+      operationId: getConferences
+      tags:
+        - conferences
+      responses:
+        200:
+          $ref: '#/components/responses/ConferencesResponse'
+  /conferences/{id}/attendees:
+    parameters:
+      - $ref: '#/components/parameters/conferenceId'
+    get:
+      summary: Conference attendees
+      description: |
+        Get all attendees and speakers attending a particular conference
+      operationId: getConferenceAttendees
+      tags:
+        - conferences
+      responses:
+        200:
+          $ref: '#/components/responses/AttendeesResponse'
+  /conferences/{id}/tracks:
+    parameters:
+      - $ref: '#/components/parameters/conferenceId'
+    get:
+      summary: Conference tracks
+      description: |
+        Get the tracks a conference offers. Not all conferences provide defined tracks
+        so you won't always get a result
+      operationId: getConferenceTracks
+      tags:
+        - conferences
+      responses:
+        200:
+          $ref: '#/components/responses/TracksResponse'
+  /conferences/{id}/sessions:
+    parameters:
+      - $ref: '#/components/parameters/conferenceId'
+    get:
+      summary: Conference session
+      description: |
+        Get all sessions at the conference, sessions include: sessions, tutorials, workshops, breaks and after parties
+      operationId: getConferenceSessions
+      tags:
+        - conferences
+      responses:
+        200:
+          $ref: '#/components/responses/SessionsResponse'
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+    Conference:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        description:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+      required:
+        - id
+        - name
+        - location
+        - description
+    Attendee:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        display_name:
+          type: string
+        company:
+          type: string
+        twitter_handle:
+          type: string
+      required:
+        - id
+        - first_name
+        - last_name
+        - display_name
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: The name of the track
+      required:
+       - id
+       - name
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - session
+            - tutorial
+            - workshop
+            - break
+            - after party
+        start_time:
+          type: string
+          format: 'date-time'
+        end_time:
+          type: string
+          format: 'date-time'
+        room_name:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+      required:
+        - id
+        - name
+        - type
+        - start_time
+        - end_time
+    Tutorial:
+      allOf:
+        - $ref: '#/components/schemas/Session'
+        - type: object
+          properties:
+            materials:
+              type: string
+            room_name:
+              type: string
+          required:
+            - materials
+            - room_name
+    Workshop:
+      allOf:
+        - $ref: '#/components/schemas/Tutorial'
+    Location:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+#    Schedule:
+#      type: object
+#      additionalProperties:
+#        $ref: '#/components/schemas/DateSchedule'
+#    DateSchedule:
+#      type: object
+  parameters:
+    conferenceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: |
+        The ID of the conference
+  responses:
+    CategoriesResponse:
+      description: A list a categories
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+                minLength: 1
+            example:
+              $ref: '#/components/examples/CategoriesResponse'
+    ConferencesResponse:
+      description: A list of conferences
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conference'
+                minLength: 1
+      links:
+        attendees:
+          $ref: '#/components/links/ConferenceAttendees'
+        tracks:
+          $ref: '#/components/links/ConferenceTracks'
+    AttendeesResponse:
+      description: A list of attendees for the conference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendee'
+                minLength: 1
+    TracksResponse:
+      description: A list of tracks available at the conference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+    SessionsResponse:
+      description: A list of sessions available at the conference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Session'
+                    - $ref: '#/components/schemas/Tutorial'
+                    - $ref: '#/components/schemas/Workshop'
+                  discriminator:
+                    propertyName: type
+                    mapping:
+                      session: '#/components/schemas/Session'
+                      tutorial: '#/components/schemas/Tutorial'
+                      workshop: '#/components/schemas/Workshop'
+                      break:
+                      'after party':
+  examples:
+    CategoriesResponse:
+      summary: An example response of categories
+      value:
+        data:
+          - id: 8578fb8a-8ac7-4861-8ac6-15e8aff13751
+            name: PHP
+          - id: 0ca794d8-7bc6-4f16-939e-14bd75e6e6a6
+            name: Laravel
+          - id: f171309c-c555-4717-9b19-a22d32ae9e19
+            name: JavaScript
+  links:
+    ConferenceAttendees:
+      operationId: getConferenceAttendees
+      parameters:
+        id: $response.body#/data/0/id
+      description: |
+        Using the id of the conference, you can get its attendees
+        by using it as the `id` parameter in `GET /conferences/{id}/attendees`
+    ConferenceTracks:
+      operationId: getConferenceTracks
+      parameters:
+        id: $response.body#/data/0/id
+      description: |
+        Using the id of the conference, you can get its tracks
+        by using it as the `id` parameter in `GET /conferences/{id}/tracks`
