@@ -19,7 +19,7 @@ tags:
 paths:
   /categories:
     get:
-      summary: Get categories
+      summary: List categories
       description: |
         Get a list of categories that apply to conferences
       operationId: getCategories
@@ -30,9 +30,9 @@ paths:
           $ref: '#/components/responses/CategoriesResponse'
   /conferences:
     get:
-      summary: Get conferences
+      summary: List conferences
       description: |
-        Get a list of tech conferences
+        Get a list of all tech conferences
       operationId: getConferences
       tags:
         - conferences
