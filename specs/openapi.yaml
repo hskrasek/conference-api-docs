@@ -79,6 +79,19 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/SessionsResponse'
+  /conferences/{id}/schedule:
+    parameters:
+      - $ref: '#/components/parameters/conferenceId'
+    get:
+      summary: Conferences schedule
+      description: |
+        Get the schedule for the conference, broken down by the days of the conference
+      operationId: getConferenceSchedule
+      tags:
+        - conferences
+      responses:
+        200:
+          $ref: '#/components/responses/ScheduleResponse'
 components:
   schemas:
     Category:
@@ -159,6 +172,7 @@ components:
             - workshop
             - break
             - after party
+            - keynote
         start_time:
           type: string
           format: 'date-time'
@@ -167,8 +181,6 @@ components:
           format: 'date-time'
         room_name:
           type: string
-        location:
-          $ref: '#/components/schemas/Location'
       required:
         - id
         - name
@@ -190,6 +202,18 @@ components:
     Workshop:
       allOf:
         - $ref: '#/components/schemas/Tutorial'
+    Break:
+      allOf:
+        - $ref: '#/components/schemas/Session'
+    AfterParty:
+      allOf:
+        - $ref: '#/components/schemas/Session'
+        - type: object
+          properties:
+            location:
+              $ref: '#/components/schemas/Location'
+          required:
+            - location
     Location:
       type: object
       properties:
@@ -201,12 +225,28 @@ components:
           type: string
         state:
           type: string
-#    Schedule:
-#      type: object
-#      additionalProperties:
-#        $ref: '#/components/schemas/DateSchedule'
-#    DateSchedule:
-#      type: object
+    Schedule:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/DateSchedule'
+    DateSchedule:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/Session'
+          - $ref: '#/components/schemas/Tutorial'
+          - $ref: '#/components/schemas/Workshop'
+          - $ref: '#/components/schemas/Break'
+          - $ref: '#/components/schemas/AfterParty'
+        discriminator:
+          propertyName: type
+          mapping:
+            session: '#/components/schemas/Session'
+            tutorial: '#/components/schemas/Tutorial'
+            workshop: '#/components/schemas/Workshop'
+            break: '#/components/schemas/Break'
+            'after party': '#/components/schemas/AfterParty'
+      minLength: 1
   parameters:
     conferenceId:
       name: id
@@ -248,6 +288,10 @@ components:
           $ref: '#/components/links/ConferenceAttendees'
         tracks:
           $ref: '#/components/links/ConferenceTracks'
+        sessions:
+          $ref: '#/components/links/ConferenceSessions'
+        schedule:
+          $ref: '#/components/links/ConferenceSchedule'
     AttendeesResponse:
       description: A list of attendees for the conference
       content:
@@ -285,14 +329,25 @@ components:
                     - $ref: '#/components/schemas/Session'
                     - $ref: '#/components/schemas/Tutorial'
                     - $ref: '#/components/schemas/Workshop'
+                    - $ref: '#/components/schemas/Break'
+                    - $ref: '#/components/schemas/AfterParty'
                   discriminator:
                     propertyName: type
                     mapping:
                       session: '#/components/schemas/Session'
                       tutorial: '#/components/schemas/Tutorial'
                       workshop: '#/components/schemas/Workshop'
-                      break:
-                      'after party':
+                      break: '#/components/schemas/Break'
+                      'after party': '#/components/schemas/AfterParty'
+    ScheduleResponse:
+      description: The schedule for the conference, grouped by day
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Schedule'
   examples:
     CategoriesResponse:
       summary: An example response of categories
@@ -319,3 +374,17 @@ components:
       description: |
         Using the id of the conference, you can get its tracks
         by using it as the `id` parameter in `GET /conferences/{id}/tracks`
+    ConferenceSessions:
+      operationId: getConferenceSessions
+      parameters:
+        id: $response.body#/data/0/id
+      description: |
+        Using the id of the conference, you can get its sessions
+        by using it as the `id` parameter in `GET /conferences/{id}/sessions`
+    ConferenceSchedule:
+      operationId: getConferenceSchedule
+      parameters:
+        id: $response.body#/data/0/id
+      description: |
+        Using the id of the conference, you can get its schedule
+        by using it as the `id` parameter in `GET /conferences/{id}/schedule`
