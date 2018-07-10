@@ -269,7 +269,8 @@ components:
                 items:
                   $ref: '#/components/schemas/Category'
                 minLength: 1
-            example:
+          examples:
+            categoriesArray:
               $ref: '#/components/examples/CategoriesResponse'
     ConferencesResponse:
       description: A list of conferences
