@@ -290,7 +290,9 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Conference'
-                minLength: 1
+          examples:
+            conferencesArray:
+              $ref: '#/components/examples/ConferencesResponse'
       links:
         attendees:
           $ref: '#/components/links/ConferenceAttendees'
@@ -312,6 +314,9 @@ components:
                 items:
                   $ref: '#/components/schemas/Attendee'
                 minLength: 1
+          examples:
+            attendeesArray:
+              $ref: '#/components/examples/AttendeesResponse'
     TracksResponse:
       description: A list of tracks available at the conference
       content:
@@ -323,6 +328,9 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Track'
+          examples:
+            tracksArray:
+              $ref: '#/components/examples/TracksResponse'
     SessionsResponse:
       description: A list of sessions available at the conference
       content:
@@ -347,6 +355,9 @@ components:
                       workshop: '#/components/schemas/Workshop'
                       break: '#/components/schemas/Break'
                       'after party': '#/components/schemas/AfterParty'
+          examples:
+            sessionsArray:
+              $ref: '#/components/examples/SessionsResponse'
     ScheduleResponse:
       description: The schedule for the conference, grouped by day
       content:
@@ -356,6 +367,9 @@ components:
             properties:
               data:
                 $ref: '#/components/schemas/Schedule'
+          examples:
+            scheduleObject:
+              $ref: '#/components/examples/ScheduleResponse'
   examples:
     CategoriesResponse:
       summary: An example response of categories
@@ -367,6 +381,166 @@ components:
             name: Laravel
           - id: f171309c-c555-4717-9b19-a22d32ae9e19
             name: JavaScript
+    ConferencesResponse:
+      summary: An example response of conferences
+      value:
+        data:
+          - id: ee8d8c43-8fdb-40ad-9437-0c5db7de6c1b
+            name: Longhorn PHP Conference
+            location:
+              name: University of Texas Commons Learning Center
+              address: 10100 Burnet Road, Bldg 137
+              city: Austin
+              state: Texas
+            description: |
+              A 3-day conference to help PHP developers level up their craft
+              and connect with the larger PHP community.
+            categories:
+              - id: 573160ee-b2c9-443c-bd60-104ecb29c33c
+                name: PHP
+            start_date: 2018-04-19
+            end_date: 2018-04-21
+          - id: 573160ee-b2c9-443c-bd60-104ecb29c33c
+            name: Laracon
+            location:
+              name: The Museum of Science and Industry
+              address: 5700 S Lake Shore Drive
+              city: Chicago
+              state: Illinois
+            start_date: 2018-07-25
+            end_date: 2018-07-26
+    AttendeesResponse:
+      summary: An example response of conference attendees
+      value:
+        data:
+          - id: 52763005-6b84-4d23-87e2-266be1650d55
+            first_name: Hunter
+            last_name: Skrasek
+            display_name: Hunter S.
+            company: Modernize
+            twitter_handle: '@hskrasek'
+          - id: 1226e12a-75cd-444c-80e6-a654272e6e90
+            first_name: Jane
+            last_name: Smith
+            display_name: Jane S.
+    TracksResponse:
+      summary: An example response of conference tracks
+      value:
+        data:
+          - id: 9e3c6317-22ec-45b2-8bc0-85ffa0825d96
+            name: API Track
+          - id: 690539de-afe3-4996-8092-d2d6e8db5f28
+            name: TDD Track
+    SessionsResponse:
+      summary: An example response of conference sessions, of all types
+      value:
+        data:
+          - id: af79cc56-88c0-4611-bf18-4d92d5573347
+            name: Building APIs You Wont Hate
+            description: |
+              How to build APIs you, or Phil Sturgeon wont hate
+            type: workshop
+            start_time: 2018-10-21 9:00:00
+            end_time: 2018-10-21 11:00:00
+            room_name: Workshop room
+            materials: |
+              Clone this github repo: https://github.com/hskrasek/example
+          - id: e65d485b-eab1-4194-b035-236d13630eae
+            name: How to create an API pipeline with Speccy
+            description: |
+              Learn how to create an entire API pipeline with just Speccy, and nothing else
+            type: tutorial
+            start_time: 2018-10-21 9:00:00
+            end_time: 2018-10-21 11:00:00
+            room_name: Tutorial room
+            materials: |
+              Clone this github repo: https://github.com/hskrasek/example
+          - id: ef977672-d528-4217-921d-80b5a64b6bba
+            name: Break Time!
+            type: break
+            start_time: 2018-10-21 11:00:00
+            end_time: 2018-10-21 11:15:00
+            room_name:
+          - id: 88435a61-5fa5-4ecc-a56e-8aa41b12e8f4
+            name: I Didn't Know Laravel Could Do That!
+            description: |
+              If you’re into to Laravel, you’ve probably already tried out the basic MVC features.
+              What you probably haven’t gotten to yet is all of the amazing features that make Laravel truly a “full stack” framework.
+              In this talk, we’ll cover queueing jobs, send emails, search, browser tests, event broadcasting and more.
+              This will be a great crash course on letting Laravel do the heavy lifting for you, and making sure you know what it’s capable of so you don’t accidentally reinvent the wheel.
+            type: session
+            start_time: 2018-10-21 18:30:00
+            end_time: 2018-10-21 20:00:00
+            room_name:
+          - id: 2e3d8f45-2e2b-47d7-98eb-f2515e9f0c2f
+            name: The best after party ever
+            description: |
+              Join us for the greatest after party at a tech conference ever
+              of all time
+            type: after party
+            start_time: 2018-10-21 18:30:00
+            end_time: 2018-10-21 20:00:00
+            location:
+              name: Coolest venue ever
+              address: 12345 Awesome Ln.
+              city: Coolville
+              state: Texas
+    ScheduleResponse:
+      summary: An example of a schedule response
+      value:
+        data:
+          '2018-10-21':
+            - id: af79cc56-88c0-4611-bf18-4d92d5573347
+              name: Building APIs You Wont Hate
+              description: |
+                How to build APIs you, or Phil Sturgeon wont hate
+              type: workshop
+              start_time: 2018-10-21 9:00:00
+              end_time: 2018-10-21 11:00:00
+              room_name: Workshop room
+              materials: |
+                Clone this github repo: https://github.com/hskrasek/example
+            - id: e65d485b-eab1-4194-b035-236d13630eae
+              name: How to create an API pipeline with Speccy
+              description: |
+                Learn how to create an entire API pipeline with just Speccy, and nothing else
+              type: tutorial
+              start_time: 2018-10-21 9:00:00
+              end_time: 2018-10-21 11:00:00
+              room_name: Tutorial room
+              materials: |
+                Clone this github repo: https://github.com/hskrasek/example
+          '2018-10-22':
+            - id: ef977672-d528-4217-921d-80b5a64b6bba
+              name: Break Time!
+              type: break
+              start_time: 2018-10-21 11:00:00
+              end_time: 2018-10-21 11:15:00
+              room_name:
+            - id: 88435a61-5fa5-4ecc-a56e-8aa41b12e8f4
+              name: I Didn't Know Laravel Could Do That!
+              description: |
+                If you’re into to Laravel, you’ve probably already tried out the basic MVC features.
+                What you probably haven’t gotten to yet is all of the amazing features that make Laravel truly a “full stack” framework.
+                In this talk, we’ll cover queueing jobs, send emails, search, browser tests, event broadcasting and more.
+                This will be a great crash course on letting Laravel do the heavy lifting for you, and making sure you know what it’s capable of so you don’t accidentally reinvent the wheel.
+              type: session
+              start_time: 2018-10-21 18:30:00
+              end_time: 2018-10-21 20:00:00
+              room_name:
+            - id: 2e3d8f45-2e2b-47d7-98eb-f2515e9f0c2f
+              name: The best after party ever
+              description: |
+                Join us for the greatest after party at a tech conference ever
+                of all time
+              type: after party
+              start_time: 2018-10-21 18:30:00
+              end_time: 2018-10-21 20:00:00
+              location:
+                name: Coolest venue ever
+                address: 12345 Awesome Ln.
+                city: Coolville
+                state: Texas
   links:
     ConferenceAttendees:
       operationId: getConferenceAttendees
