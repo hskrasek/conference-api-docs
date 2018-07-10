@@ -119,11 +119,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Category'
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
       required:
         - id
         - name
         - location
-        - description
+        - start_date
+        - end_date
     Attendee:
       type: object
       properties:
