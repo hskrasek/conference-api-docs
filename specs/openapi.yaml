@@ -1,7 +1,7 @@
 openapi: "3.0.1"
 info:
   title: "Tech Conferences API"
-  version: "0.1.0"
+  version: "0.2.0"
   contact:
     name: Developer Support
     url: developers.conferences.io/support
@@ -175,6 +175,7 @@ components:
           type: string
           enum:
             - session
+            - talk
             - tutorial
             - workshop
             - break
@@ -194,6 +195,16 @@ components:
         - type
         - start_time
         - end_time
+    Talk:
+      allOf:
+        - $ref: '#/components/schemas/Session'
+        - type: object
+          properties:
+            speaker:
+              $ref: '#/components/schemas/Attendee'
+          required:
+            - speaker
+            - room_name
     Tutorial:
       allOf:
         - $ref: '#/components/schemas/Session'
@@ -201,9 +212,10 @@ components:
           properties:
             materials:
               type: string
-            room_name:
-              type: string
+            speaker:
+              $ref: '#/components/schemas/Attendee'
           required:
+            - speaker
             - materials
             - room_name
     Workshop:
@@ -221,6 +233,9 @@ components:
               $ref: '#/components/schemas/Location'
           required:
             - location
+    Keynote:
+      allOf:
+        - $ref: '#/components/schemas/Talk'
     Location:
       type: object
       properties:
@@ -245,6 +260,7 @@ components:
           - $ref: '#/components/schemas/Workshop'
           - $ref: '#/components/schemas/Break'
           - $ref: '#/components/schemas/AfterParty'
+          - $ref: '#/components/schemas/Talk'
         discriminator:
           propertyName: type
           mapping:
@@ -253,6 +269,7 @@ components:
             workshop: '#/components/schemas/Workshop'
             break: '#/components/schemas/Break'
             'after party': '#/components/schemas/AfterParty'
+            talk: '#/components/schemas/Talk'
       minLength: 1
   parameters:
     conferenceId:
@@ -347,6 +364,7 @@ components:
                     - $ref: '#/components/schemas/Workshop'
                     - $ref: '#/components/schemas/Break'
                     - $ref: '#/components/schemas/AfterParty'
+                    - $ref: '#/components/schemas/Talk'
                   discriminator:
                     propertyName: type
                     mapping:
@@ -355,6 +373,7 @@ components:
                       workshop: '#/components/schemas/Workshop'
                       break: '#/components/schemas/Break'
                       'after party': '#/components/schemas/AfterParty'
+                      talk: '#/components/schemas/Talk'
           examples:
             sessionsArray:
               $ref: '#/components/examples/SessionsResponse'
@@ -445,6 +464,13 @@ components:
             room_name: Workshop room
             materials: |
               Clone this github repo: https://github.com/hskrasek/example
+            speaker:
+              id: d09317eb-b77a-45c3-b72e-b7322fce8f63
+              first_name: Hunter
+              last_name: Skrasek
+              display_name: Hunter S.
+              company: Modernize
+              twitter_handle: '@hskrasek'
           - id: e65d485b-eab1-4194-b035-236d13630eae
             name: How to create an API pipeline with Speccy
             description: |
@@ -455,12 +481,17 @@ components:
             room_name: Tutorial room
             materials: |
               Clone this github repo: https://github.com/hskrasek/example
+            speaker:
+              id: ef44da58-697d-4b73-8075-6f216c965065
+              first_name: Jimmy
+              last_name: Bob
+              display_name: Jimmy B.
+              company: Tech Company
           - id: ef977672-d528-4217-921d-80b5a64b6bba
             name: Break Time!
             type: break
             start_time: 2018-10-21 11:00:00
             end_time: 2018-10-21 11:15:00
-            room_name:
           - id: 88435a61-5fa5-4ecc-a56e-8aa41b12e8f4
             name: I Didn't Know Laravel Could Do That!
             description: |
@@ -468,10 +499,16 @@ components:
               What you probably haven’t gotten to yet is all of the amazing features that make Laravel truly a “full stack” framework.
               In this talk, we’ll cover queueing jobs, send emails, search, browser tests, event broadcasting and more.
               This will be a great crash course on letting Laravel do the heavy lifting for you, and making sure you know what it’s capable of so you don’t accidentally reinvent the wheel.
-            type: session
+            type: talk
             start_time: 2018-10-21 18:30:00
             end_time: 2018-10-21 20:00:00
-            room_name:
+            room_name: Awesomer Room
+            speaker:
+              id: cd002d28-cc28-4ccc-a7e2-1920b3b8d172
+              first_name: Phil
+              last_name: Sturgeon
+              display_name: Phil S.
+              twitter_handle: '@philsturgeon'
           - id: 2e3d8f45-2e2b-47d7-98eb-f2515e9f0c2f
             name: The best after party ever
             description: |
@@ -500,6 +537,13 @@ components:
               room_name: Workshop room
               materials: |
                 Clone this github repo: https://github.com/hskrasek/example
+              speaker:
+                id: d09317eb-b77a-45c3-b72e-b7322fce8f63
+                first_name: Hunter
+                last_name: Skrasek
+                display_name: Hunter S.
+                company: Modernize
+                twitter_handle: '@hskrasek'
             - id: e65d485b-eab1-4194-b035-236d13630eae
               name: How to create an API pipeline with Speccy
               description: |
@@ -510,6 +554,12 @@ components:
               room_name: Tutorial room
               materials: |
                 Clone this github repo: https://github.com/hskrasek/example
+              speaker:
+                id: ef44da58-697d-4b73-8075-6f216c965065
+                first_name: Jimmy
+                last_name: Bob
+                display_name: Jimmy B.
+                company: Tech Company
           '2018-10-22':
             - id: ef977672-d528-4217-921d-80b5a64b6bba
               name: Break Time!
@@ -524,10 +574,16 @@ components:
                 What you probably haven’t gotten to yet is all of the amazing features that make Laravel truly a “full stack” framework.
                 In this talk, we’ll cover queueing jobs, send emails, search, browser tests, event broadcasting and more.
                 This will be a great crash course on letting Laravel do the heavy lifting for you, and making sure you know what it’s capable of so you don’t accidentally reinvent the wheel.
-              type: session
+              type: talk
               start_time: 2018-10-21 18:30:00
               end_time: 2018-10-21 20:00:00
-              room_name:
+              room_name: Awesomer Room
+              speaker:
+                id: cd002d28-cc28-4ccc-a7e2-1920b3b8d172
+                first_name: Phil
+                last_name: Sturgeon
+                display_name: Phil S.
+                twitter_handle: '@philsturgeon'
             - id: 2e3d8f45-2e2b-47d7-98eb-f2515e9f0c2f
               name: The best after party ever
               description: |
